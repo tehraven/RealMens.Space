@@ -353,18 +353,24 @@ const buildAttackerRow = (attackerData, mensData) => {
 
 const displayKillStats = () => {
     var menlyDeathRating = (attackersStats.mens / (attackersStats.mens+attackersStats.notMens));
-    if(menlyDeathRating < 0.2) return;
     
-    var ratingHtml = '<h4 class="media-heading">Menly Meter</h4><div class="progress">';
-    var ratingVerbose = '';
-    ratingHtml += '<div class="progress-bar progress-bar-';
-    if(menlyDeathRating >= 0.8) { ratingVerbose = 'Real Mens Death'; ratingHtml += 'danger'; }
-    else if(menlyDeathRating >= 0.6) { ratingVerbose = 'Very Menly'; ratingHtml += 'warning'; }
-    else if(menlyDeathRating >= 0.4) { ratingVerbose = 'Menly'; ratingHtml += 'success'; }
-    else { ratingVerbose = 'Unmenly'; ratingHtml += 'info'; }
-    ratingHtml += '" role="progressbar" aria-valuenow="' + (Math.floor(menlyDeathRating*100)) + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + (Math.floor(menlyDeathRating*100)) + '%">';
-    ratingHtml += '<span>' + ratingVerbose + '</span></div></div>';
-    ratingHtml += '<small>This is a ' + ratingVerbose + ' because ' + (Math.floor(menlyDeathRating*100)) + '% of the attackers were Menly</small>';
+    var ratingHtml = '<h4 class="media-heading">Menly Meter</h4>';
+    
+    if(menlyDeathRating < 0.2) {
+        ratingHtml += '<p>Not Mens. These attackers should be ashamed.</p>';
+    }
+    else {
+        ratingHtml += '<div class="progress">';
+        var ratingVerbose = '';
+        ratingHtml += '<div class="progress-bar progress-bar-';
+        if(menlyDeathRating >= 0.8) { ratingVerbose = 'Real Mens Death'; ratingHtml += 'danger'; }
+        else if(menlyDeathRating >= 0.6) { ratingVerbose = 'Very Menly'; ratingHtml += 'warning'; }
+        else if(menlyDeathRating >= 0.4) { ratingVerbose = 'Menly'; ratingHtml += 'success'; }
+        else { ratingVerbose = 'Unmenly'; ratingHtml += 'info'; }
+        ratingHtml += '" role="progressbar" aria-valuenow="' + (Math.floor(menlyDeathRating*100)) + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + (Math.floor(menlyDeathRating*100)) + '%">';
+        ratingHtml += '<span>' + ratingVerbose + '</span></div></div>';
+        ratingHtml += '<small>This is a ' + ratingVerbose + ' because ' + (Math.floor(menlyDeathRating*100)) + '% of the attackers were Menly</small>';
+    }
     $("#div_zkill_lostship_right > div").html(ratingHtml);
 }
 

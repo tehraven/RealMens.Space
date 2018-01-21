@@ -40,7 +40,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse hidden">
           <form class="navbar-form navbar-right" role="form">
-            <a class="btn btn-default navbar-right" href="https://PayPal.Me/tehraven" role="button">Gib Monies</a>
+            <a class="btn btn-default navbar-left" href="https://discord.gg/CUSbtq9" target="_blank" role="button">Discord</a>
+            &nbsp;
+            <a class="btn btn-default navbar-right" href="https://PayPal.Me/tehraven" target="_blank" role="button">Gib Monies</a>
           </form>          
         </div><!--/.navbar-collapse -->
       </div>
@@ -201,7 +203,8 @@
 
       <footer class='container'>
         <p>Shit code created by RaveNight.</p>
-        <small>Running on NGINX with absolutely no backend code nor databases.</small>
+        <small>Running on NGINX with absolutely no backend code nor databases.</small><br />
+        <small>Static data from EVE Online (Ship Types, Characters) are stored on your local computer (localStorage). This makes subsequent requests</small>
       </footer>
         
     </div>
