@@ -201,7 +201,7 @@
 
       <footer class='container'>
         <p>Shit code created by RaveNight.</p>
-        <p>Running on NGINX with new backend code or databases. Vanilla, baby.</p>
+        <small>Running on NGINX with absolutely no backend code nor databases.</small>
       </footer>
         
     </div>
