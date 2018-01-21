@@ -48,34 +48,33 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-      <div class="container">
-        <h1>Real Mens Checker</h1>
-        <p>Enter a zkillboard.com Kill URL to see if the attackers were Real Mens.</p>
-        <form role="form">
-            <div class="input-group">
-                <input type="text" id='input_verify_zkillurl' class="form-control" placeholder="zkill url...">
-                <span class="input-group-btn">
-                    <button id='btn_verify_zkillurl' class="btn btn-default" type="button">Verify!</button>
-                </span>
-            </div>
-        </form>
-    </div>
-    </div>
-    
-    <div id="div_zkill_attackers" class="container">
-        
-        <div id="div_zkill_attackers_mens_label" class="alert alert-success" role="alert" style="display:none;">Real Mens <small>(Menly Ship, Menly Damage)</small></div>
-        <div id='div_zkill_attackers_mens' class='row'></div>
-        <br />
-        <div id="div_zkill_attackers_notmens_label" class="alert alert-danger" role="alert" style="display:none;">Not Mens</div>
-        <div id='div_zkill_attackers_notmens' class='row'></div>
-    </div>
-    
-    <br /><br /><br /><br /><br />
-    
-    <div class="jumbotron">
-    
         <div class="container">
+            <h1>Real Mens Checker</h1>
+            <p>Enter a zkillboard.com Kill URL to see if the attackers were Real Mens.</p>
+            <form role="form">
+                <div class="input-group">
+                    <input type="text" id='input_verify_zkillurl' class="form-control" placeholder="zkill url...">
+                    <span class="input-group-btn">
+                        <button id='btn_verify_zkillurl' class="btn btn-default" type="button">Verify!</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        
+        <br /><br /><br />
+    
+        <div id="div_zkill_attackers" class="container">
+            
+            <div id="div_zkill_attackers_mens_label" class="alert alert-success" role="alert" style="display:none;">Real Mens <small>(Menly Ship, Menly Damage)</small></div>
+            <div id='div_zkill_attackers_mens' class='row'></div>
+            <br />
+            <div id="div_zkill_attackers_notmens_label" class="alert alert-danger" role="alert" style="display:none;">Not Mens</div>
+            <div id='div_zkill_attackers_notmens' class='row'></div>
+        </div>
+        
+        <br /><br /><br /><br /><br />
+    
+        <div id="div_confused" class="container hidden">
             <h2>Confused?</h2>
             <p>TEST had a blue entity named ICARUS.</p>
             <p>ICARUS shot TEST, and were effectively reset.</p>
