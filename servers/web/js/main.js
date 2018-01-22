@@ -32,284 +32,38 @@ let notMenWeaponTypes = [
 const resetApp = () => {
     killData = attackersData = [];
     attackersStats = {mens:0,notMens:0};
+    $("#div_zkill_lostship_meter").html('');
     $("#div_zkill_lostship").addClass('hidden');
-}
-
-const storageAvailable = type => {
-    try {
-        var storage = window[type],
-            x = '__storage_test__';
-        storage.setItem(x, x);
-        storage.removeItem(x);
-        return true;
-    }
-    catch(e) {
-        return e instanceof DOMException && (
-            // everything except Firefox
-            e.code === 22 ||
-            // Firefox
-            e.code === 1014 ||
-            // test name field too, because code might not be present
-            // everything except Firefox
-            e.name === 'QuotaExceededError' ||
-            // Firefox
-            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-            // acknowledge QuotaExceededError only if there's something already stored
-            storage.length !== 0;
-    }
-}
-
-const isCached = (cache, key) => {
-    try {
-        var out = readFromCache(cache, key);
-        return true;
-    }
-    catch(e) {
-        return false;
-    }
-}
-
-const readFromCache = (cache, key) => {
-    if(storageAvailable('localStorage')) {
-        var cachedObject = localStorage.getItem(cache);
-        if(!cachedObject) { throw "No such cache to read from"; }
-        cachedObject = JSON.parse(cachedObject);
-        if(!cachedObject.hasOwnProperty(key)) { throw "No such key within cache"; }
-        return cachedObject[key];
-    }
-    else {
-        if(!appCache.hasOwnProperty(cache) || !appCache[cache].hasOwnProperty(key)) {
-            throw "No such cache-key combination";
-        }
-        return appCache[cache][key];
-    }
-}
-
-const setToCache = (cache, key, value) => {
-    if(storageAvailable('localStorage')) {
-        var cachedObject = localStorage.getItem(cache);
-        if(!cachedObject) {
-            cachedObject = {};
-        }
-        else {
-            cachedObject = JSON.parse(cachedObject);
-        }
-        cachedObject[key] = value;
-        return localStorage.setItem(cache, JSON.stringify(cachedObject));
-    }
-    else {
-        if(!appCache.hasOwnProperty(cache)) {
-            throw "No such cache";
-        }
-        appCache[cache][key] = value;
-        return (appCache[cache][key] == value);
-    }
-}
-
-const getKillData = killID => {
-    resetApp();
-    return new Promise((resolve, reject) => {
-        $.get("https://zkillboard.com/api/killID/" + killID + "/")
-            .done(posts => resolve(posts[0]))
-            .fail(err => reject(err));
-    });
-};
-
-const getLostShipData = lossmail => {
-    
-    return new Promise((resolve, reject) => {
-        
-        var data = {
-            characterID: lossmail.victim.character_id,
-            characterName: 'Unknown',
-            shipTypeID: lossmail.victim.ship_type_id,
-            shipTypeName: 'Unknown',
-            damageDone: lossmail.victim.damage_taken,
-            items: []
-        };
-        
-        if(isCached('types', data.shipTypeID) && isCached('characters', data.characterID)) {
-            data.shipTypeName = readFromCache('types', data.shipTypeID).name;
-            data.characterName = readFromCache('characters', data.characterID).name;
-            return resolve(data);
-        }
-        else if(isCached('types', data.shipTypeID)) {
-            
-            setTimeout(function() {
-            
-                data.shipTypeName = readFromCache('types', data.shipTypeID).name;
-                $.get("https://crest-tq.eveonline.com/characters/" + data.characterID + "/", function(crestData) {
-                    setToCache('characters', data.characterID, {name: crestData.name});
-                    data.characterName = crestData.name;
-                    attackersData.push(data);
-                    return resolve(data);
-                });
-                
-            }, (readFromCache('types', data.shipTypeID).name === "") ? 2000 : 1);
-            
-        }
-        else {
-            setToCache('types', data.shipTypeID, "");
-            fetch("https://crest-tq.eveonline.com/inventory/types/" + data.shipTypeID + "/")
-                .then(
-                    function(response) {
-                        if (response.status !== 200) {
-                            reject('Looks like there was a problem. Status Code: ' + response.status);
-                            return;
-                        }
-
-                        response.json().then(function(crestData) {
-                            setToCache('types', data.shipTypeID, {name: crestData.name});
-                            data.shipTypeName = crestData.name;
-                            setToCache('characters', data.characterID, "");                            
-                            $.get("https://crest-tq.eveonline.com/characters/" + data.characterID + "/", function(crestData) {
-                                setToCache('characters', data.characterID, {name: crestData.name});
-                                data.characterName = crestData.name;
-                                attackersData.push(data);
-                                resolve(data);
-                            });
-                            
-                        });
-                    }
-                )
-                .catch(function(err) {
-                    reject('Fetch Error :-S', err);
-                });
-        }
-        
-    });
-}
-
-const getAttackerData = attacker => {
-    
-    return new Promise((resolve, reject) => {
-        
-        var data = {
-            characterID: attacker.character_id,
-            characterName: 'Unknown',
-            shipTypeID: attacker.ship_type_id,
-            shipTypeName: 'Unknown',
-            damageDone: attacker.damage_done,
-            weaponTypeID: attacker.weapon_type_id
-        };
-        
-        if(isCached('types', data.shipTypeID) && isCached('characters', data.characterID)) {
-            data.shipTypeName = readFromCache('types', data.shipTypeID).name;
-            data.characterName = readFromCache('characters', data.characterID).name;
-            return resolve(data);
-        }
-        else if(isCached('types', data.shipTypeID)) {
-            
-            setTimeout(function() {
-            
-                data.shipTypeName = readFromCache('types', data.shipTypeID).name;
-                $.get("https://crest-tq.eveonline.com/characters/" + data.characterID + "/", function(crestData) {
-                    setToCache('characters', data.characterID, {name: crestData.name});
-                    data.characterName = crestData.name;
-                    attackersData.push(data);
-                    return resolve(data);
-                });
-                
-            }, (readFromCache('types', data.shipTypeID).name === "") ? 2000 : 1);
-            
-        }
-        else {
-            setToCache('types', data.shipTypeID, "");
-            fetch("https://crest-tq.eveonline.com/inventory/types/" + data.shipTypeID + "/")
-                .then(
-                    function(response) {
-                        if (response.status !== 200) {
-                            reject('Looks like there was a problem. Status Code: ' + response.status);
-                            return;
-                        }
-
-                        response.json().then(function(crestData) {
-                            setToCache('types', data.shipTypeID, {name: crestData.name});
-                            data.shipTypeName = crestData.name;
-                            setToCache('characters', data.characterID, "");                            
-                            $.get("https://crest-tq.eveonline.com/characters/" + data.characterID + "/", function(crestData) {
-                                setToCache('characters', data.characterID, {name: crestData.name});
-                                data.characterName = crestData.name;
-                                attackersData.push(data);
-                                resolve(data);
-                            });
-                            
-                        });
-                    }
-                )
-                .catch(function(err) {
-                    reject('Fetch Error :-S', err);
-                });
-        }
-        
-    });
-}
-
-const isAttackerMens = attacker => {
-    
-    var mensData = [true, ""];
-    
-    for(var i in realMensShipGroups) {
-        if(realMensShipGroups[i].typeIDs.includes(attacker.shipTypeID)) {
-            mensData = [true, (realMensShipGroups[i].hasOwnProperty('reason') ? realMensShipGroups[i].reason : "")];
-            return mensData;
-        }
-    }
-    
-    for(var i in realMensShips) {
-        if(realMensShips[i].typeID === attacker.shipTypeID) {
-            mensData = [true, (realMensShips[i].hasOwnProperty('reason') ? realMensShips[i].reason : "")];
-            return mensData;
-        }
-    }
-    
-    // If you did no damage, you are not mens
-    if(attacker.damageDone < 1) {
-        mensData = [false, "Not Menly Damage"];
-    }
-    
-    // If you didn't do at least 1% damage, you are not mens
-    var total = 0;
-    for(var i in killData.attackers) {
-        total += killData.attackers[i].damage_done;
-    }
-    if(attacker.damageDone < (total / 33)) {
-        mensData = [false, "Not Menly Damage"];
-    }
-    
-    for(var i in notMensShipGroups) {
-        if(notMensShipGroups[i].typeIDs.includes(attacker.shipTypeID)) {
-            mensData = [false, (notMensShipGroups[i].hasOwnProperty('reason') ? notMensShipGroups[i].reason : "Not Menly Ship Type")];
-        }
-    }
-    
-    for(var i in notMenShips) {
-        if(notMenShips[i].typeID === attacker.shipTypeID) {
-            mensData = [false, (notMenShips[i].hasOwnProperty('reason') ? notMenShips[i].reason : "Not Menly Ship")];
-        }
-    }
-    
-    for(var i in notMenWeaponTypes) {
-        if(notMenWeaponTypes[i].typeID === attacker.weaponTypeID) {
-            mensData = [false, (notMenWeaponTypes[i].hasOwnProperty('reason') ? notMenWeaponTypes[i].reason : "Not Menly Weapon")];
-        }
-    }
-    
-    return mensData;
 }
 
 const updateKillReport = data => {
     killData = data;
     document.location.hash = "kill/"+data.killmail_id;
-    $("#div_zkill_lostship_left a img").attr('src', '').show();
-    $("#div_zkill_lostship_left > h4, #div_zkill_lostship_right > div").text('').show();
+    $('#input_verify_zkillurl').val("https://zkillboard.com/kill/" + data.killmail_id + "/");
     getLostShipData(data)
         .then(lostShipData => {
+            
+            /* Ship Box */
+            $("#div_zkill_lostship_a img").attr('src', 'https://imageserver.eveonline.com/Render/' + lostShipData.shipTypeID + '_256.png');
+            $("#div_zkill_lostship_a h3").text(lostShipData.shipTypeName);
+            $("#div_zkill_lostship_a p:nth-of-type(1)").html('<small>' + data.zkb.totalValue.formatMoney(2, '.', ',') + ' ISK lost</small>');
+            $("#div_zkill_lostship_a p:nth-of-type(2) a:nth-of-type(1)").text("Related").attr('href', 'https://zkillboard.com/related/' + data.solar_system_id + '/' + data.killmail_time.replace(/\-/g, '').replace(':', '').replace('T', '').match(/([0-9a-zA-Z]+)/)[1].substring(0, 10) + '00/');
+            $("#div_zkill_lostship_a p:nth-of-type(2) a:nth-of-type(2)").text("Similar").attr('href', 'https://zkillboard.com/ship/' + lostShipData.shipTypeID + '/');
+            
+            /* Victim Box */
+            $("#div_zkill_lostship_b img").attr('src', 'https://imageserver.eveonline.com/Character/' + lostShipData.characterID + '_256.jpg');
+            $("#div_zkill_lostship_b h3").text(lostShipData.characterName);
+            $("#div_zkill_lostship_b p:nth-of-type(1)").html('<small>More stuff coming soon</small>');
+            $("#div_zkill_lostship_b p:nth-of-type(2) a:nth-of-type(1)").text("Profile").attr('href', 'https://evewho.com/pilot/' + lostShipData.characterName);
+            $("#div_zkill_lostship_b p:nth-of-type(2) a:nth-of-type(2)").text("Killboard").attr('href', 'https://zkillboard.com/character/' + lostShipData.characterID + '/');
+            
+            /* Menly Stats Box */
+            $("#div_zkill_lostship_c img").attr('src', '#');
+            $("#div_zkill_lostship_c h3").text("Menliest Attacker");
+            $("#div_zkill_lostship_c p:nth-of-type(1)").html('<small> ( Loading... ) </small>');
+            $("#div_zkill_lostship_c p:nth-of-type(2)").hide();
+            
             $("#div_zkill_lostship").removeClass('hidden');
-            $("#div_zkill_lostship_left a").attr('href', 'https://evewho.com/pilot/' + lostShipData.characterName);
-            $("#div_zkill_lostship_left a img").attr('src', 'https://imageserver.eveonline.com/Render/' + lostShipData.shipTypeID + '_256.png');
-            $("#div_zkill_lostship_left > h4").text("Loading Killmail...");
-            $("#div_zkill_lostship_right > div").text("( Pilot Data Will Appear Soon )");
             
             $("#div_zkill_attackers_mens_label, div_zkill_attackers_notmens_label").hide();
             $('#div_zkill_attackers_mens, #div_zkill_attackers_notmens').html('').show();
@@ -318,12 +72,6 @@ const updateKillReport = data => {
                     getAttackerData(data.attackers[attacker])
                         .then(attackerData => {
                             var mensData = isAttackerMens(attackerData);
-                            if(mensData[0]) {
-                                attackersStats.mens++;
-                            }
-                            else {
-                                attackersStats.notMens++;
-                            }
                             var target = mensData[0] ? 'div_zkill_attackers_mens' : 'div_zkill_attackers_notmens';
                             var html = buildAttackerRow(attackerData, mensData);
                             $('#'+target).append(html);
@@ -333,7 +81,6 @@ const updateKillReport = data => {
                         .catch(error => console.log(error));
                 }
                 $("#div_confused").removeClass("hidden");
-                $("#div_zkill_lostship_left > h4").text(lostShipData.characterName + " lost a " + lostShipData.shipTypeName);
                 
             }
             
@@ -343,7 +90,7 @@ const updateKillReport = data => {
 }
 
 const buildAttackerRow = (attackerData, mensData) => {
-    var html = '<div class="media col-lg-4 col-md-6 col-sm-12">';
+    var html = '<div class="col-lg-4 col-md-6 col-sm-12">';
     html += '<div class="media-left"><a href="https://evewho.com/pilot/' + attackerData.characterName + '" target="_blank" class="thumbnail"><img alt="64x64" class="media-object" data-src="" src="https://imageserver.eveonline.com/Type/' + attackerData.shipTypeID + '_64.png" style="width: 64px; height: 64px;"></a></div>';
     html += '<div class="media-body"><h4 class="media-heading">' + attackerData.characterName + '</h4>' + attackerData.damageDone + ' HP with a ' + attackerData.shipTypeName;
     if(mensData[1].length > 0) { html += '<br /><strong>' + mensData[1] + '</strong>'}
@@ -352,10 +99,24 @@ const buildAttackerRow = (attackerData, mensData) => {
 };
 
 const displayKillStats = () => {
+    
+    attackersStats.mens = attackersStats.notMens = 0;
+    var mostMenly = {damageDone:0};
+    for(var i in attackersData) {
+        var mensData = isAttackerMens(attackersData[i]);
+        if(mensData[0]) {
+            attackersStats.mens++;
+            if(attackersData[i].characterID != killData.victim.character_id && attackersData[i].damageDone > mostMenly.damageDone) {
+                mostMenly = attackersData[i];
+            }
+        }
+        else {
+            attackersStats.notMens++;
+        }
+    }    
     var menlyDeathRating = (attackersStats.mens / (attackersStats.mens+attackersStats.notMens));
     
-    var ratingHtml = '<h4 class="media-heading">Menly Meter</h4>';
-    
+    var ratingHtml = '';
     if(menlyDeathRating < 0.2) {
         ratingHtml += '<p>Not Mens. These attackers should be ashamed.</p>';
     }
@@ -369,13 +130,19 @@ const displayKillStats = () => {
         else { ratingVerbose = 'Unmenly'; ratingHtml += 'info'; }
         ratingHtml += '" role="progressbar" aria-valuenow="' + (Math.floor(menlyDeathRating*100)) + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + (Math.floor(menlyDeathRating*100)) + '%">';
         ratingHtml += '<span>' + ratingVerbose + '</span></div></div>';
-        ratingHtml += '<small>This is a ' + ratingVerbose + ' because ' + (Math.floor(menlyDeathRating*100)) + '% of the attackers were Menly</small>';
+        ratingHtml += '<small>This is a ' + ratingVerbose + ' because ';
+        if(menlyDeathRating <= 0.5) ratingHtml += ' only ';
+        ratingHtml += (Math.floor(menlyDeathRating*100)) + '% of the attackers were Menly</small>';
     }
-    $("#div_zkill_lostship_right > div").html(ratingHtml);
+    $("#div_zkill_lostship_meter").html(ratingHtml);
+    
+    $("#div_zkill_lostship_c img").attr('src', 'https://imageserver.eveonline.com/Character/' + mostMenly.characterID + '_256.jpg');
+    $("#div_zkill_lostship_c h3").text(mostMenly.characterName);
+    $("#div_zkill_lostship_c p:nth-of-type(1)").html("Most Menly Attacker");
+    $("#div_zkill_lostship_c p:nth-of-type(2) a:nth-of-type(1)").text("Profile").attr('href', 'https://evewho.com/pilot/' + mostMenly.characterName);
+    $("#div_zkill_lostship_c p:nth-of-type(2) a:nth-of-type(2)").text("Killboard").attr('href', 'https://zkillboard.com/character/' + mostMenly.characterID + '/');
+    $("#div_zkill_lostship_c p:nth-of-type(2)").show();
 }
-
-const validateKillURL = url => url.match(/https\:\/\/zkillboard.com\/kill\/([0-9]+)/) && url.match(/https\:\/\/zkillboard.com\/kill\/([0-9]+)/).length > 1;
-const extractKillID = url => url.match(/https\:\/\/zkillboard.com\/kill\/([0-9]+)/)[1];
 
 $('#btn_verify_zkillurl').on('click', function() {
     var url = $('#input_verify_zkillurl').val();

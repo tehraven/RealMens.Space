@@ -66,15 +66,57 @@
         <br /><br /><br />
         
         <div id="div_zkill_lostship" class="container hidden">
-            <div class="row">
-                <div id="div_zkill_lostship_left" class="media col-md-6 col-sm-12">
-                    <div class="media-left pull-left">
-                        <a href="#" target='_blank'><img alt="128x128" class="media-object" data-src="" src="" style="width: 128px; height: 128px;"></a>
+            <div class="panel panel-default">
+                <div class="panel-heading">Menly Meter</div>
+                <div id="div_zkill_lostship_meter" class="panel-body well-sm text-center"></div>
+            </div>
+            <div class="row text-center">
+                <div class="col-sm-12 col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">The Kill</div>
+                        <div class="panel-body well-sm">
+                            <div id="div_zkill_lostship_a">
+                                <img src="..." alt="...">
+                                <div class="caption">
+                                    <h3>Thumbnail label</h3>
+                                    <p>...</p>
+                                    <p><a href="#" target="_blank" class="btn btn-primary" role="button">Button</a> 
+                                    <a href="#" target="_blank" class="btn btn-default" role="button">Button</a></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="media-heading">Loading...</h4>
                 </div>
-                <div id="div_zkill_lostship_right" class="col-md-6 col-sm-12">
-                    <div class="media-body">
+                <div class="col-sm-12 col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">The Victim</div>
+                        <div class="panel-body well-sm">
+                            <div id="div_zkill_lostship_b">
+                                <img src="..." alt="...">
+                                <div class="caption">
+                                    <h3>Thumbnail label</h3>
+                                    <p>...</p>
+                                    <p><a href="#" target="_blank" class="btn btn-primary" role="button">Button</a> 
+                                    <a href="#" target="_blank" class="btn btn-default" role="button">Button</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">The Mens</div>
+                        <div class="panel-body well-sm">
+                            <div id="div_zkill_lostship_c">
+                                <img src="..." alt="...">
+                                <div class="caption">
+                                    <h3>Thumbnail label</h3>
+                                    <p>...</p>
+                                    <p><a href="#" target="_blank" class="btn btn-primary" role="button">Button</a> 
+                                    <a href="#" target="_blank" class="btn btn-default" role="button">Button</a></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,11 +126,20 @@
     
         <div id="div_zkill_attackers" class="container">
             
-            <div id="div_zkill_attackers_mens_label" class="alert alert-success" role="alert" style="display:none;">Real Mens <small>(Menly Ship, Menly Damage)</small></div>
-            <div id='div_zkill_attackers_mens' class='row'></div>
-            <br />
-            <div id="div_zkill_attackers_notmens_label" class="alert alert-danger" role="alert" style="display:none;">Not Mens</div>
-            <div id='div_zkill_attackers_notmens' class='row'></div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Real Mens</div>
+                <div class="panel-body well-sm">
+                    <div id='div_zkill_attackers_mens' class='row'></div>
+                </div>
+            </div>
+            
+            <div class="panel panel-danger">
+                <div class="panel-heading">Not Mens</div>
+                <div class="panel-body well-sm">
+                    <div id='div_zkill_attackers_notmens' class='row'></div>
+                </div>
+            </div>
+            
         </div>
         
         <br /><br /><br /><br /><br />
@@ -204,13 +255,16 @@
       <footer class='container'>
         <p>Shit code created by RaveNight.</p>
         <small>Running on NGINX with absolutely no backend code nor databases.</small><br />
-        <small>Static data from EVE Online (Ship Types, Characters) are stored on your local computer (localStorage). This makes subsequent requests</small>
+        <small>This web app runs entirely from your computer. Your browser/internet are used to query API's on the web.</small><br />
+        <small>Static data from EVE Online (Ship Types, Characters) are stored on your local computer (localStorage). This makes subsequent requests unnecessary.</small>
       </footer>
         
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/func.js"></script>
+    <script src="js/app.js"></script>
     <script src="js/main.js"></script>
     
 </body>
