@@ -33,6 +33,7 @@ const resetApp = () => {
     killData = attackersData = [];
     attackersStats = {mens:0,notMens:0};
     $("#div_zkill_lostship_meter").html('');
+    $("#div_zkill_attackers_mens, #div_zkill_attackers_notmens").html('').hide();
     $("#div_zkill_lostship").addClass('hidden');
 }
 
@@ -65,7 +66,6 @@ const updateKillReport = data => {
             
             $("#div_zkill_lostship").removeClass('hidden');
             
-            $("#div_zkill_attackers_mens_label, div_zkill_attackers_notmens_label").hide();
             $('#div_zkill_attackers_mens, #div_zkill_attackers_notmens').html('').show();
             if(data.attackers && data.attackers.length) {
                 for(var attacker in data.attackers) {
@@ -159,6 +159,7 @@ $('#form_verify_zkillurl').on('submit', function(ev) {
 });
 
 document.addEventListener("DOMContentLoaded",function() {
+    resetApp();
     if(document.location.hash && document.location.hash.match(/kill\/([0-9]+)/)) {
         getKillData(document.location.hash.match(/kill\/([0-9]+)/)[1])
             .then(data => updateKillReport(data))
