@@ -196,7 +196,7 @@ const isAttackerMens = attacker => {
     for(var i in killData.attackers) {
         total += killData.attackers[i].damage_done;
     }
-    if(attacker.damageDone < (total / 33)) {
+    if(attacker.damageDone < (total / (killData.attackers.length > 20 ? 75 : 33))) {
         mensData = [false, "Not Menly Damage"];
     }
     

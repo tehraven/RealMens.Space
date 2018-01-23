@@ -36,14 +36,19 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">Real Mens (in Space)</a>
+          <a class="navbar-brand" href="/">Real Mens</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse hidden">
-          <form class="navbar-form navbar-right" role="form">
-            <a class="btn btn-default navbar-left" href="https://discord.gg/CUSbtq9" target="_blank" role="button">Discord</a>
-            &nbsp;
-            <a class="btn btn-default navbar-right" href="https://PayPal.Me/tehraven" target="_blank" role="button">Gib Monies</a>
-          </form>          
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class='visible-lg'><a>Tools:</a></li>
+            <li> <a href="/#kill">Killmail</a> </li>
+            <li> <a href="/#battle">Battle Report</a> </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class='visible-lg'><a>Links:</a></li>
+            <li> <a href="https://discord.gg/CUSbtq9">Discord</a> </li>
+            <li> <a href="https://PayPal.Me/tehraven">Donate</a> </li>
+          </ul>         
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -124,7 +129,7 @@
         
         <br /><br /><br />
     
-        <div id="div_zkill_attackers" class="container">
+        <div id="div_zkill_attackers" class="container hidden">
             
             <div class="panel panel-primary">
                 <div class="panel-heading">Real Mens</div>

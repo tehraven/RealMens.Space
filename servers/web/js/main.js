@@ -28,13 +28,17 @@ let notMenWeaponTypes = [
     {typeID:23473, typeName:'Hornet EC-900', reason:'Real Mens do not use ewar. -Farmstink'},
     {typeID:23707, typeName:'Hornet EC-300', reason:'Real Mens do not use ewar. -Farmstink'}
 ];
+let unmenlyWhines = [
+    'This type of gameplay disables fun',
+    'Was this a gank or a blob?',
+    'How are our newbies supposed to make any ISK?'
+]
 
 const resetApp = () => {
     killData = attackersData = [];
     attackersStats = {mens:0,notMens:0};
-    $("#div_zkill_lostship_meter").html('');
-    $("#div_zkill_attackers_mens, #div_zkill_attackers_notmens").html('').hide();
-    $("#div_zkill_lostship").addClass('hidden');
+    $("#div_zkill_lostship_meter, #div_zkill_attackers_mens, #div_zkill_attackers_notmens").html('');
+    $("#div_zkill_lostship, #div_zkill_attackers").hide();
 }
 
 const updateKillReport = data => {
@@ -64,9 +68,9 @@ const updateKillReport = data => {
             $("#div_zkill_lostship_c p:nth-of-type(1)").html('<small> ( Loading... ) </small>');
             $("#div_zkill_lostship_c p:nth-of-type(2)").hide();
             
-            $("#div_zkill_lostship").removeClass('hidden');
+            $("#div_zkill_lostship").removeClass('hidden').fadeIn();
             
-            $('#div_zkill_attackers_mens, #div_zkill_attackers_notmens').html('').show();
+            $('#div_zkill_attackers_mens, #div_zkill_attackers_notmens').html('');
             if(data.attackers && data.attackers.length) {
                 for(var attacker in data.attackers) {
                     getAttackerData(data.attackers[attacker])
@@ -75,7 +79,7 @@ const updateKillReport = data => {
                             var target = mensData[0] ? 'div_zkill_attackers_mens' : 'div_zkill_attackers_notmens';
                             var html = buildAttackerRow(attackerData, mensData);
                             $('#'+target).append(html);
-                            $('#'+target+'_label').show();
+                            $('#'+target+'_label').removeClass('hidden').fadeIn();
                             displayKillStats();
                         })
                         .catch(error => console.log(error));
@@ -83,7 +87,7 @@ const updateKillReport = data => {
                 $("#div_confused").removeClass("hidden");
                 
             }
-            
+            $("#div_zkill_attackers").removeClass('hidden').fadeIn();
             
         })
         .catch(error => console.log(error));
@@ -117,8 +121,8 @@ const displayKillStats = () => {
     var menlyDeathRating = (attackersStats.mens / (attackersStats.mens+attackersStats.notMens));
     
     var ratingHtml = '';
-    if(menlyDeathRating < 0.2) {
-        ratingHtml += '<p>Not Mens. These attackers should be ashamed.</p>';
+    if( (menlyDeathRating < 0.05 && attackersStats.mens > 25) || (menlyDeathRating < 0.1 && attackersStats.mens > 10) || (menlyDeathRating < 0.2 && attackersStats.mens < 3) ) {
+        ratingHtml += '<p>Not Mens. ' + unmenlyWhines[Math.floor(Math.random() * unmenlyWhines.length)] + '</p>';
     }
     else {
         ratingHtml += '<div class="progress">';
@@ -141,7 +145,7 @@ const displayKillStats = () => {
     $("#div_zkill_lostship_c p:nth-of-type(1)").html("Most Menly Attacker");
     $("#div_zkill_lostship_c p:nth-of-type(2) a:nth-of-type(1)").text("Profile").attr('href', 'https://evewho.com/pilot/' + mostMenly.characterName);
     $("#div_zkill_lostship_c p:nth-of-type(2) a:nth-of-type(2)").text("Killboard").attr('href', 'https://zkillboard.com/character/' + mostMenly.characterID + '/');
-    $("#div_zkill_lostship_c p:nth-of-type(2)").show();
+    $("#div_zkill_lostship_c p:nth-of-type(2)").removeClass('hidden').fadeIn();
 }
 
 $('#btn_verify_zkillurl').on('click', function() {
