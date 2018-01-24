@@ -34,13 +34,15 @@ let unmenlyWhines = [
     'How are our newbies supposed to make any ISK?'
 ]
 
-const module_kill_reset = () => {
+const module_kill_reset = (unload) => {
     killData = attackersData = [];
     attackersStats = {mens:0,notMens:0};
     $("#div_zkill_lostship_meter, #div_zkill_attackers_mens, #div_zkill_attackers_notmens").html('');
     $("#div_zkill_lostship, #div_zkill_attackers").hide();
-    $('#btn_verify_zkillurl').off('click');
-    $('#form_verify_zkillurl').off('click');
+    if(unload) {
+        $('#btn_verify_zkillurl').off('click');
+        $('#form_verify_zkillurl').off('click');
+    }
 }
 
 const module_kill_init = () => {
