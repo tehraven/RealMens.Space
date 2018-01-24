@@ -4,7 +4,7 @@ const changeModule = (moduleName) => {
     
     if(activeModule != '') {
         try {
-            eval('module_' + activeModule + '_reset()')
+            eval('module_' + activeModule + '_reset(true)')
         }
         catch(error) {}
     }
