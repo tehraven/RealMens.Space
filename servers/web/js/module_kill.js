@@ -49,7 +49,9 @@ const module_kill_init = () => {
     appFetch("/modules/kill.html")
             .then(response => {
                 response.text().then(htmlData => {
+                    
                     $("#app").html(htmlData);
+                    
                     $('#btn_verify_zkillurl').on('click', function() {
                         var url = $('#input_verify_zkillurl').val();
                         if(validateKillURL(url)) {
@@ -63,6 +65,13 @@ const module_kill_init = () => {
                         $('#btn_verify_zkillurl').click();
                         return false;
                     });
+                    
+                    if(document.location.hash && document.location.hash.match(/kill\/([0-9]+)/)) {
+                        getKillData(document.location.hash.match(/kill\/([0-9]+)/)[1])
+                            .then(data => updateKillReport(data))
+                            .catch(error => console.log(error));
+                    }
+                    
                 })
             })
             .catch(error => console.error(error));
@@ -399,17 +408,4 @@ const displayKillStats = () => {
     $("#div_zkill_lostship_c p:nth-of-type(2) a:nth-of-type(1)").text("Profile").attr('href', 'https://evewho.com/pilot/' + mostMenly.characterName);
     $("#div_zkill_lostship_c p:nth-of-type(2) a:nth-of-type(2)").text("Killboard").attr('href', 'https://zkillboard.com/character/' + mostMenly.characterID + '/');
     $("#div_zkill_lostship_c p:nth-of-type(2)").removeClass('hidden').fadeIn();
-}
-
-const module_kill = () => {
-    
-    module_kill_reset();
-    module_kill_init();
-    
-    if(document.location.hash && document.location.hash.match(/kill\/([0-9]+)/)) {
-        getKillData(document.location.hash.match(/kill\/([0-9]+)/)[1])
-            .then(data => updateKillReport(data))
-            .catch(error => console.log(error));
-    }
-    
 }
