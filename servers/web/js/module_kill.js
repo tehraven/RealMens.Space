@@ -266,20 +266,6 @@ const isAttackerMens = attacker => {
         }
     }
     
-    // If you did no damage, you are not mens
-    if(attacker.damageDone < 1) {
-        mensData = [false, "Not Menly Damage"];
-    }
-    
-    // If you didn't do at least 1% damage, you are not mens
-    var total = 0;
-    for(var i in killData.attackers) {
-        total += killData.attackers[i].damage_done;
-    }
-    if(attacker.damageDone < (total / (killData.attackers.length > 20 ? 75 : 33))) {
-        mensData = [false, "Not Menly Damage"];
-    }
-    
     for(var i in notMensShipGroups) {
         if(notMensShipGroups[i].typeIDs.includes(attacker.shipTypeID)) {
             mensData = [false, (notMensShipGroups[i].hasOwnProperty('reason') ? notMensShipGroups[i].reason : "Not Menly Ship Type")];
@@ -296,6 +282,20 @@ const isAttackerMens = attacker => {
         if(notMenWeaponTypes[i].typeID === attacker.weaponTypeID) {
             mensData = [false, (notMenWeaponTypes[i].hasOwnProperty('reason') ? notMenWeaponTypes[i].reason : "Not Menly Weapon")];
         }
+    }
+    
+    // If you did no damage, you are not mens
+    if(attacker.damageDone < 1) {
+        mensData = [false, "Not Menly Damage"];
+    }
+    
+    // If you didn't do at least 1% damage, you are not mens
+    var total = 0;
+    for(var i in killData.attackers) {
+        total += killData.attackers[i].damage_done;
+    }
+    if(attacker.damageDone < (total / (killData.attackers.length > 20 ? 75 : 33))) {
+        mensData = [false, "Not Menly Damage"];
     }
     
     return mensData;
