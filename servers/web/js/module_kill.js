@@ -3,14 +3,15 @@ let appCache = [];
 let attackersData = [];
 let attackersStats = {mens:0,notMens:0};
 let realMensShipGroups = [
-    {groupID:541, groupName:'Interdictor', typeIDs:[22460,22464,22452,22456], reason:'Real Mens brings bubbles', forced: true}
+    {groupID:541, groupName:'Interdictor', typeIDs:[22460,22464,22452,22456], reason:'Real Mens brings bubbles', forced: true},
+    {groupID:1534, groupName:'Newb Ships', typeIDs: [617,33079,601,615,596,9862,9858,1233,9854,9860,588,33081,606,33083], reason:'Newb ships very mens'}
 ];
 let notMensShipGroups = [
     {groupID:831, groupName:'Interceptors', typeIDs:[], reason:'Very Zoom Not Menly'},
     {groupID:834, groupName:'Stealth Bomber', typeIDs: [12032,12034,12038,11377,45530], reason:'Cloaks are not menly'},
     {groupID:833, groupName:'Force Recon', typeIDs: [11969,33675,44995,11957,33395,11965,45531], reason:'Cloaks AND Ewar? Not Menly'},
     {groupID:898, groupName:'Black Ops', typeIDs: [44996,22440,22428,22430,22436], reason:'Real Mens use gates'},
-    {groupID:1534, groupName:'Command Destroyer', typeIDs: [37480,37481,37482,37483], reason:'alex 39 > small ass'}
+    {groupID:1534, groupName:'Command Destroyer', typeIDs: [37480,37483,37481,37482], reason:'<a href="https://evewho.com/pilot/alex%2039" target="_blank">alex 39</a> > small ass'}
 ];
 let realMensShips = [
     {typeID:670, typeName:'Capsule', reason:'Real Mens explode'},
@@ -269,24 +270,28 @@ const isAttackerMens = attacker => {
     for(var i in notMensShipGroups) {
         if(notMensShipGroups[i].typeIDs.includes(attacker.shipTypeID)) {
             mensData = [false, (notMensShipGroups[i].hasOwnProperty('reason') ? notMensShipGroups[i].reason : "Not Menly Ship Type")];
+            return mensData;
         }
     }
     
     for(var i in notMenShips) {
         if(notMenShips[i].typeID === attacker.shipTypeID) {
             mensData = [false, (notMenShips[i].hasOwnProperty('reason') ? notMenShips[i].reason : "Not Menly Ship")];
+            return mensData;
         }
     }
     
     for(var i in notMenWeaponTypes) {
         if(notMenWeaponTypes[i].typeID === attacker.weaponTypeID) {
             mensData = [false, (notMenWeaponTypes[i].hasOwnProperty('reason') ? notMenWeaponTypes[i].reason : "Not Menly Weapon")];
+            return mensData;
         }
     }
     
     // If you did no damage, you are not mens
     if(attacker.damageDone < 1) {
         mensData = [false, "Not Menly Damage"];
+        return mensData;
     }
     
     // If you didn't do at least 1% damage, you are not mens
@@ -296,6 +301,7 @@ const isAttackerMens = attacker => {
     }
     if(attacker.damageDone < (total / (killData.attackers.length > 20 ? 75 : 33))) {
         mensData = [false, "Not Menly Damage"];
+        return mensData;
     }
     
     return mensData;
