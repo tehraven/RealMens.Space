@@ -9,7 +9,8 @@ let notMensShipGroups = [
     {groupID:831, groupName:'Interceptors', typeIDs:[], reason:'Very Zoom Not Menly'},
     {groupID:834, groupName:'Stealth Bomber', typeIDs: [12032,12034,12038,11377,45530], reason:'Cloaks are not menly'},
     {groupID:833, groupName:'Force Recon', typeIDs: [11969,33675,44995,11957,33395,11965,45531], reason:'Cloaks AND Ewar? Not Menly'},
-    {groupID:898, groupName:'Black Ops', typeIDs: [44996,22440,22428,22430,22436], reason:'Real Mens use gates'}
+    {groupID:898, groupName:'Black Ops', typeIDs: [44996,22440,22428,22430,22436], reason:'Real Mens use gates'},
+    {groupID:1534, groupName:'Command Destroyer', typeIDs: [37480,37481,37482,37483], reason:'alex 39 > small ass'}
 ];
 let realMensShips = [
     {typeID:670, typeName:'Capsule', reason:'Real Mens explode'},
