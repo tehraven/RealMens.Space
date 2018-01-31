@@ -40,51 +40,59 @@ const module_kill_reset = (unload) => {
     killData = attackersData = [];
     attackersStats = {mens:0,notMens:0};
     $("#div_zkill_lostship_meter, #div_zkill_attackers_mens, #div_zkill_attackers_notmens").html('');
-    $("#div_zkill_lostship, #div_zkill_attackers").hide();
+    $("#div_zkill_lostship, #div_zkill_attackers, #btn_battle_zkillurl").hide();
     if(unload) {
         $('#btn_verify_zkillurl').off('click');
         $('#form_verify_zkillurl').off('click');
+		$('#btn_battle_zkillurl').off('click');
     }
 }
 
 const module_kill_init = () => {
+	
     appFetch("/modules/kill.html")
-            .then(response => {
-                response.text().then(htmlData => {
-                    
-                    $("#app").html(htmlData);
-                    
-                    $('#btn_verify_zkillurl').on('click', function() {
-                        var url = $('#input_verify_zkillurl').val();
-                        if(validateKillURL(url)) {
-                            getKillData(extractKillID(url))
-                                .then(data => updateKillReport(data))
-                                .catch(error => console.log(error));
-                        }
-                    });
-                    $('#form_verify_zkillurl').on('submit', function(ev) {
-                        ev.preventDefault();
-                        $('#btn_verify_zkillurl').click();
-                        return false;
-                    });
-                    
-                    if(document.location.hash && document.location.hash.match(/kill\/([0-9]+)/)) {
-                        getKillData(document.location.hash.match(/kill\/([0-9]+)/)[1])
-                            .then(data => updateKillReport(data))
-                            .catch(error => console.log(error));
-                    }
-                    
-                })
-            })
-            .catch(error => console.error(error));
+		.then(response => {
+			response.text().then(htmlData => {
+				
+				$("#app").html(htmlData);
+				router.updateURL();
+				
+				$('#btn_verify_zkillurl').off('click').on('click', function() {
+					var url = $('#input_verify_zkillurl').val();
+					if(validateKillURL(url)) {
+						getKillData(extractKillID(url))
+							.then(data => updateKillReport(data))
+							.catch(error => console.log(error));
+					}
+				});
+				$('#form_verify_zkillurl').on('submit', function(ev) {
+					ev.preventDefault();
+					$('#btn_verify_zkillurl').click();
+					return false;
+				});
+				
+				$('#btn_battle_zkillurl').off('click').on('click', function() {
+					router.redirect('module', 'battle', url_data.filter, true);
+				});
+				
+				if(url_data.filter)
+					getKillData(url_data.filter)
+						.then(data => updateKillReport(data))
+						.catch(error => console.log(error));
+				
+			})
+		})
+		.catch(error => console.error(error));
 }
 
 
 const getKillData = killID => {
     module_kill_reset();
-    return new Promise((resolve, reject) => {            
+    return new Promise((resolve, reject) => {
         appFetch("https://zkillboard.com/api/killID/" + killID + "/")
-            .then(response => { response.json().then(posts => resolve(posts[0])) })
+            .then(response => {
+				response.json().then(posts => resolve(posts[0]));
+			})
             .catch(error => reject(error));
     });
 };
@@ -173,7 +181,8 @@ const getAttackerData = attacker => {
             shipTypeID: attacker.ship_type_id,
             shipTypeName: 'Unknown',
             damageDone: attacker.damage_done,
-            weaponTypeID: attacker.weapon_type_id
+            weaponTypeID: attacker.weapon_type_id,
+			source: attacker
         };
         
         if(isCached('types', data.shipTypeID) && isCached('characters', data.characterID)) {
@@ -312,7 +321,8 @@ const extractKillID = url => url.match(/https\:\/\/zkillboard.com\/kill\/([0-9]+
 
 const updateKillReport = data => {
     killData = data;
-    document.location.hash = "kill/"+data.killmail_id;
+    router.redirect('module', 'kill', data.killmail_id);
+    router.updateURL();
     $('#input_verify_zkillurl').val("https://zkillboard.com/kill/" + data.killmail_id + "/");
     getLostShipData(data)
         .then(lostShipData => {
@@ -357,6 +367,7 @@ const updateKillReport = data => {
                 
             }
             $("#div_zkill_attackers").removeClass('hidden').fadeIn();
+			$('#btn_battle_zkillurl').fadeIn();
             
         })
         .catch(error => console.log(error));

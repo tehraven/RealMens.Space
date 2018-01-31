@@ -96,3 +96,36 @@ const setToCache = (cache, key, value) => {
         return (appCache[cache][key] == value);
     }
 }
+
+let loadingPercent = 0;
+const showLoading = (autoprogress) => {
+	
+    return new Promise((resolve, reject) => {
+		return resolve(); //fuck waiting
+		var loadingHtml = '<div class="container"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">';
+		loadingHtml += '<span class="sr-only">Loading 0% Complete</span></div></div></div>';
+		$("#app").html(loadingHtml);
+		
+		if(autoprogress) {
+			var i = 0, iHold = setInterval(() => {
+				if(i >= 2000) {
+					clearInterval(iHold);
+					resolve();
+				}
+				i += 300;
+				loadingPercent = Math.floor((i/2000)*100);
+				$("#app div.progress-bar").attr('aria-valuenow', loadingPercent).css('width', loadingPercent + '%').find('span').text('Loading ' + loadingPercent + '% Complete');
+			}, 100);
+		}
+	});
+	
+}
+
+const pushLoading = (percentage, callbackIfDone) => {
+	loadingPercent += percentage;
+	if(loadingPercent >= 100) {
+		loadingPercent = 0;
+		$("#app").html("");
+		if(callbackIfDone) callbackIfDone();
+	}
+}
