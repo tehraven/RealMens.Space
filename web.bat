@@ -7,7 +7,7 @@ FOR /f "tokens=*" %%i IN ('docker service ls -q') DO docker service rm -f %%i
 
 docker build -t tehraven/realmens.space:%tag% .
 docker rm -f web
-docker run -d --name web -p 80:80 -p 443:443 -t tehraven/realmens.space:%tag%
+docker run -d -v C:\Users\Anthony\Documents\GitHub\RealMens.Space\servers\web:/var/www --name web -p 80:80 -p 443:443 -t tehraven/realmens.space:%tag%
   
 docker ps
 docker logs web

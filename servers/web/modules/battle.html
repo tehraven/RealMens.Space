@@ -1,4 +1,41 @@
 
-    <div id="div_battle" class="container">
-        <h2>COMING THOON</h2>
-    </div>
+        <div class="container">
+            <h1>Real Mens Battle Checker</h1>
+            <p>Enter a zkillboard.com Kill URL to discover who were Real Mens.</p>
+            <form id='form_verify_zkillurl' role="form">
+                <div class="input-group" style='max-width: 700px;'>
+                    <input type="text" id='input_verify_zkillurl' class="form-control" placeholder="zkill url...">
+                    <span class="input-group-btn">
+                        <button id='btn_verify_zkillurl' class="btn btn-default" type="button">Verify!</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        
+        <br /><br /><br />
+            
+        <div id="div_zkill_attackers" class="container hidden">
+            
+			<div class="row">
+			
+				<div class="col-md-6 col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">Real Mens</div>
+						<div class="panel-body well-sm">
+							<div id='div_zkill_attackers_mens' class='row'></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-6 col-sm-12">
+					<div class="panel panel-danger">
+						<div class="panel-heading">Not Mens</div>
+						<div class="panel-body well-sm">
+							<div id='div_zkill_attackers_notmens' class='row'></div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+            
+        </div>

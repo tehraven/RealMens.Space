@@ -1,30 +1,117 @@
-let activeModule = '';
+let url_data = {};
 
-const changeModule = (moduleName) => {
+class router {
     
-    if(activeModule != '') {
-        try {
-            eval('module_' + activeModule + '_reset(true)')
-        }
-        catch(error) {}
+    constructor() {
+        router.updateApp();
     }
     
-    activeModule = moduleName;
-    
-    var loadingHtml = '<div class="container"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">';
-    loadingHtml += '<span class="sr-only">Loading 0% Complete</span></div></div></div>';
-    $("#app").html(loadingHtml);
-    
-    var i = 0, iHold = setInterval(() => {
-        if(i >= 2000) {
-            clearInterval(iHold);
-            return eval('module_' + activeModule + '_init()');
+    static parseURL() {
+        
+        var data = {
+            type: 'module',
+            name: 'kill',
+            filter: ''
+        };
+        
+        if(document.location.hash) {
+			
+			/* Check for old version to migrate */
+			var typeRegex = new RegExp("^#kill\/([0-9]+)");
+			if(document.location.hash.match(typeRegex)) {
+				data.type = 'module';
+				data.name = 'kill';
+				data.filter = document.location.hash.match(typeRegex)[1];
+			} else {
+				
+				var typeRegex = new RegExp("^#([a-zA-Z]+)\/");
+				
+				if(document.location.hash.match(typeRegex))
+					data.type = document.location.hash.match(typeRegex)[1];
+				
+				var nameRegex = new RegExp("^#" + data.type + "\/([a-zA-Z]+)");
+				
+				if(document.location.hash.match(nameRegex))
+					data.name = document.location.hash.match(nameRegex)[1];
+				
+				var filterRegex = new RegExp("^#" + data.type + "\/" + data.name + "\/([0-9]+)");
+				
+				if(document.location.hash.match(filterRegex))
+					data.filter = document.location.hash.match(filterRegex)[1];
+				
+			}
+            
         }
-        i += 300;
-        var value = Math.floor((i/2000)*100);
-        $("#app div.progress-bar").attr('aria-valuenow', value).css('width', value + '%').find('span').text('Loading ' + value + '% Complete');
-    }, 300);
+        
+        return data;
+    }
+    
+    static updateURL() {
+        document.location.hash = router.getHash();
+    }
+    
+    static getCurrentURL() {
+        return router.createURL(url_data.type, url_data.name, url_data.filter);
+    }
+    
+    static getHash() {
+        
+        if(url_data.type && url_data.name && url_data.filter)
+            return url_data.type + "/" + url_data.name + "/" + url_data.filter;
+        else if(url_data.type && url_data.name)
+            return url_data.type + "/" + url_data.name;
+        else if(url_data.type)
+            return url_data.type;
+        return "";
+        
+    }
+    
+    static createURL(type, name, filter) {
+        
+        if(type && name && filter)
+            return "/#" + type + "/" + name + "/" + filter;
+        else if(type && name)
+            return "/#" + type + "/" + name;
+        else if(type)
+            return "/#" + type;
+        return "/";
+        
+    }
+    
+    static redirect(type, name, filter, autoroute) {
+        
+        url_data.type = type || 'module';
+		url_data.name = name || 'kill';
+		url_data.filter = filter || '';
+		
+		if(autoroute)
+			router.route();
+        
+    }
+    
+    static route() {
+    
+        if(url_data.type) {
+            try {
+                if(window.hasOwnProperty(url_data.type + '_' + url_data.name + '_reset(true)'))
+                    eval(url_data.type + '_' + url_data.name + '_reset(true)')
+            }
+            catch(error) {}
+        }
+        
+		showLoading(true).then(() => {
+			router.updateURL();
+			eval(url_data.type + '_' + url_data.name + '_init()');
+		});
+        
+    }
+
 }
 
-document.addEventListener("DOMContentLoaded", () => changeModule('kill'));
-$('*[data-tool]').on('click', function(event) { changeModule($(this).data('tool')); });
+document.addEventListener("DOMContentLoaded", () => {
+    
+    url_data = router.parseURL();
+    router.route();
+    
+});
+$('*[data-tool]').on('click', function(event) { router.redirect('module', $(this).data('tool')); });
