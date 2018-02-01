@@ -43,6 +43,7 @@ class router {
             
         }
         
+		url_data = data;
         return data;
     }
     
@@ -114,4 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
     router.route();
     
 });
-$('*[data-tool]').on('click', function(event) { router.redirect('module', $(this).data('tool')); });
+$('*[data-tool]').on('click', function(event) {
+	router.redirect('module', $(this).data('tool'), url_data.filter, true);
+});

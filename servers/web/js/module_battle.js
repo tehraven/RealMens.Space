@@ -89,16 +89,10 @@ const updateBattleReport = (losses) => {
 		
 	}
 	
-	var hold = battleData.participants;
-	hold.sort(function(a, b) {
-		if(a.damage_done < b.damage_done) return 1;
-		else if(a.damage_done == b.damage_done) return 0;
-		return -1;
-	});
-	battleData.participants = hold;
-	
-	for(var i in battleData.participants) {
-		var participant = battleData.participants[i];
+	var filtered = [];
+	for(var i in battleData.participants) { filtered.push(battleData.participants[i]); }
+	for(var i in filtered) {
+		var participant = filtered[i];
 		getAttackerData(participant)
 			.then(data => {
 				var isMens = (data.source.killer === true && data.source.loser === true);
