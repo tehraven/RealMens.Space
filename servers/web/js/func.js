@@ -9,17 +9,22 @@ Number.prototype.formatMoney = function(c, d, t) {
     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 };
 
+let appFetchProgressTimer = null;
 const appFetch = (url) => {
+	$("#top_loading").slideDown();
     var currentKillID = killData.killmail_id;
     return new Promise((resolve, reject) => {
         fetch(url)
             .then((response) => {
-                    if(currentKillID != killData.killmail_id) {
-                        return console.log("Ignoring old Fetch");
-                    }
-                    return resolve(response);
-                }
-            )
+				if(appFetchProgressTimer) clearTimeout(appFetchProgressTimer);
+				appFetchProgressTimer = setTimeout(function() {
+					$("#top_loading").slideUp();
+				}, 2000);
+				if(currentKillID != killData.killmail_id) {
+					return console.log("Ignoring old Fetch");
+				}
+				return resolve(response);
+			})
             .catch(function(err) {
                 reject(err);
             });

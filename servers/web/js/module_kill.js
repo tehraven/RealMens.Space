@@ -182,26 +182,38 @@ const getAttackerData = attacker => {
             shipTypeName: 'Unknown',
             damageDone: attacker.damage_done,
             weaponTypeID: attacker.weapon_type_id,
+			weaponTypeName: 'Unknown',
 			source: attacker
         };
+		
+		if(isCached('types', data.shipTypeID))
+			data.shipTypeName = readFromCache('types', data.shipTypeID).name;
+		else {}
+		
+		if(isCached('characters', data.characterID))
+			data.characterName = readFromCache('characters', data.characterID).name;
+		else {}
+		
+		if(isCached('types', data.weaponTypeID))
+			data.weaponTypeName = readFromCache('types', data.weaponTypeID).name;
+		else {}
         
-        if(isCached('types', data.shipTypeID) && isCached('characters', data.characterID)) {
-            data.shipTypeName = readFromCache('types', data.shipTypeID).name;
-            data.characterName = readFromCache('characters', data.characterID).name;
-            
-            var found = false;
-            for(var i in attackersData) {
-                if(attackersData[i].characterID == data.characterID) {
-                    found = true;
-                    break;
-                }
-            }
-            if(found === false) {
-                attackersData.push(data);
-            }
-            
-            return resolve(data);
-        }
+        if(data.shipTypeName.length != "Unknown" && data.shipTypeName.length != "Unknown" && data.shipTypeName.length != "Unknown") {
+			var found = false;
+			for(var i in attackersData) {
+				if(attackersData[i].characterID == data.characterID) {
+					found = true;
+					break;
+				}
+			}
+			if(found === false) {
+				attackersData.push(data);
+			}
+			
+			return resolve(data);
+		}
+		
+		
         else if(isCached('types', data.shipTypeID)) {
             
             setTimeout(function() {
