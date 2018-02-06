@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     url_data = router.parseURL();
     router.route();
+	$("#top_loading").slideUp();
     
 });
 $('*[data-tool]').on('click', function(event) {
