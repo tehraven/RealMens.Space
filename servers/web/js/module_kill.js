@@ -134,6 +134,25 @@ const getLostShipData = lossmail => {
             }, (readFromCache('types', data.shipTypeID).name === "") ? 2000 : 1);
             
         }
+        else if(isCached('characters', data.characterID)) {
+            
+            setTimeout(function() {
+            
+                data.shipTypeName = readFromCache('types', data.shipTypeID).name;
+                appFetch("https://crest-tq.eveonline.com/characters/" + data.characterID + "/")
+                    .then(response => {
+                        response.json().then(crestData => {
+                            setToCache('characters', data.characterID, {name: crestData.name});
+                            data.characterName = crestData.name;
+                            attackersData.push(data);
+                            return resolve(data);
+                        })
+                    })
+                    .catch(error => console.warn(error));
+                
+            }, (readFromCache('types', data.shipTypeID).name === "") ? 2000 : 1);
+            
+        }
         else {
             setToCache('types', data.shipTypeID, "");
             appFetch("https://crest-tq.eveonline.com/inventory/types/" + data.shipTypeID + "/")
@@ -198,7 +217,7 @@ const getAttackerData = attacker => {
 			data.weaponTypeName = readFromCache('types', data.weaponTypeID).name;
 		else {}
         
-        if(data.shipTypeName.length != "Unknown" && data.shipTypeName.length != "Unknown" && data.shipTypeName.length != "Unknown") {
+        if(data.shipTypeName != "Unknown" && data.characterName != "Unknown" && data.weaponTypeName != "Unknown") {
 			var found = false;
 			for(var i in attackersData) {
 				if(attackersData[i].characterID == data.characterID) {
@@ -212,8 +231,6 @@ const getAttackerData = attacker => {
 			
 			return resolve(data);
 		}
-		
-		
         else if(isCached('types', data.shipTypeID)) {
             
             setTimeout(function() {
